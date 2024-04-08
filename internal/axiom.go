@@ -87,11 +87,11 @@ func (c *Client) SendTra(net string, address string, amount float64, tweetUrl st
 		if matched {
 			return "", global.InsufficientCode, fmt.Errorf(global.InsufficientMsg)
 		}
-		return "", global.CommonErrCode, fmt.Errorf(global.CommonErrMsg)
+		return "", global.CommonErrCode, fmt.Errorf("%s-%s %s", "Axiomledger", c.Config.Axiom.TestNetName, "Network Error，Please Try Again Later！")
 	}
 	if checkTxSuccess(c, txHash) {
 		if err := putTxData(txHash, c, lowerAddress, global.NativeToken, net); err != nil {
-			return "", global.CommonErrCode, fmt.Errorf(global.CommonErrMsg)
+			return "", global.CommonErrCode, fmt.Errorf("%s-%s %s", "Axiomledger", c.Config.Axiom.TestNetName, "Network Error，Please Try Again Later！")
 		}
 	}
 	return txHash, global.SUCCESS, nil
@@ -111,7 +111,7 @@ func (c *Client) PreCheck(net string, address string) (int, error) {
 		if err.Error() == global.EnoughTokenMsg {
 			return global.EnoughTokenCode, err
 		}
-		return global.CommonErrCode, fmt.Errorf(global.CommonErrMsg)
+		return global.CommonErrCode, fmt.Errorf("%s-%s %s", "Axiomledger", c.Config.Axiom.TestNetName, "Network Error，Please Try Again Later！")
 	}
 	return global.SUCCESS, nil
 }
