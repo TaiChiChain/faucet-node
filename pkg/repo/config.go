@@ -26,21 +26,21 @@ func (d *Duration) String() string {
 }
 
 type Config struct {
-	Axiom    AXIOM    `toml:"axiom" json:"axiom"`
-	Network  Network  `toml:"network" json:"network"`
-	Log      Log      `toml:"log" json:"log"`
-	Scrapper Scrapper `toml:"scrapper" json:"scrapper"`
+	Axiom    AXIOM    `mapstructure:"axiom" toml:"axiom"`
+	Network  Network  `mapstructure:"network" toml:"network"`
+	Log      Log      `mapstructure:"log" toml:"log"`
+	Scrapper Scrapper `mapstructure:"scrapper" toml:"scrapper"`
 }
 
 type Scrapper struct {
-	ScrapperAddr string `mapstructure:"scrapper_addr" json:"scrapper_addr"`
+	ScrapperAddr string `mapstructure:"scrapper_addr" toml:"scrapper_addr"`
 }
 
 // Log are config about log
 type Log struct {
-	Filename     string `toml:"filename" json:"filename"`
-	ReportCaller bool   `mapstructure:"report_caller"`
-	Level        string `toml:"level" json:"level"`
+	Filename     string `mapstructure:"filename" toml:"filename"`
+	ReportCaller bool   `mapstructure:"report_caller" toml:"report_caller"`
+	Level        string `mapstructure:"level" toml:"level"`
 
 	EnableCompress   bool     `mapstructure:"enable_compress" toml:"enable_compress"`
 	EnableColor      bool     `mapstructure:"enable_color" toml:"enable_color"`
@@ -49,25 +49,25 @@ type Log struct {
 	MaxSize          uint     `mapstructure:"max_size" toml:"max_size"`
 	RotationTime     Duration `mapstructure:"rotation_time" toml:"rotation_time"`
 
-	Module LogModule `toml:"module" json:"module"`
+	Module LogModule `mapstructure:"module" toml:"module"`
 }
 type LogModule struct {
-	ApiServer string `mapstructure:"api_server" toml:"api_server" json:"api_server"`
-	Global    string `mapstructure:"global" toml:"global" json:"global"`
+	ApiServer string `mapstructure:"api_server" toml:"api_server"`
+	Global    string `mapstructure:"global" toml:"global"`
 }
 
 type AXIOM struct {
-	TestNetName  string  `mapstructure:"test_net_name" json:"test_net_name"`
-	AxiomAddr    string  `mapstructure:"axiom_addr" json:"axiom_addr"`
-	AxiomKeyPath string  `mapstructure:"axiom_key_path" json:"axiom_key_path"`
-	Amount       float64 `mapstructure:"amount" json:"amount"`
-	TweetAmount  float64 `mapstructure:"tweet_amount" json:"tweet_amount"`
-	ClaimLimit   float64 `mapstructure:"claim_limit" json:"claim_limit"`
-	GasLimit     uint64  `mapstructure:"gas_limit" json:"gas_limit"`
+	TestNetName  string  `mapstructure:"test_net_name" json:"test_net_name" toml:"test_net_name"`
+	AxiomAddr    string  `mapstructure:"axiom_addr" json:"axiom_addr" toml:"axiom_addr"`
+	AxiomKeyPath string  `mapstructure:"axiom_key_path" json:"axiom_key_path" toml:"axiom_key_path"`
+	Amount       float64 `mapstructure:"amount" json:"amount" toml:"amount"`
+	TweetAmount  float64 `mapstructure:"tweet_amount" json:"tweet_amount" toml:"tweet_amount"`
+	ClaimLimit   float64 `mapstructure:"claim_limit" json:"claim_limit" toml:"claim_limit"`
+	GasLimit     uint64  `mapstructure:"gas_limit" json:"gas_limit" toml:"gas_limit"`
 }
 
 type Network struct {
-	Port string `mapstructure:"port" json:"port"`
+	Port string `mapstructure:"port" toml:"port"`
 }
 
 func DefaultConfig() *Config {
