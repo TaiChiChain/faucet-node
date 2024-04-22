@@ -4,11 +4,15 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"strings"
 
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/axiomesh/faucet/global"
+	"github.com/axiomesh/faucet/internal/contract"
 )
 
 func sendTxAxm(c *Client, toAddr string, amount float64) (string, error) {
@@ -34,36 +38,66 @@ func sendTxAxm(c *Client, toAddr string, amount float64) (string, error) {
 		return "", err
 	}
 
-	value := floatToEtherBigInt(amount)         // in wei (1 eth)
-	gasLimit := uint64(c.Config.Axiom.GasLimit) // in units
+	value := floatToEtherBigInt(amount)
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {
-		c.logger.Error(err)
 		return "", err
 	}
-	toAddress := common.HexToAddress(toAddr)
-	var data []byte
-	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, data)
+	chainId, err := client.ChainID(context.Background())
+	if err != nil {
+		return "", err
+	}
+	taurusFaucet, err := contract.NewTaurusFaucet(common.HexToAddress(c.Config.Axiom.FaucetAddr), c.axiomClient)
+	if err != nil {
+		return "", err
+	}
 
-	chainID, err := client.NetworkID(context.Background())
+	contractAbi, err := abi.JSON(strings.NewReader(string(contract.TaurusFaucetABI)))
+	if err != nil {
+		return "", err
+	}
+
+	input, err := contractAbi.Pack("drip", common.HexToAddress(toAddr), value)
+	if err != nil {
+		return "", err
+	}
+	contractAddress := common.HexToAddress(c.Config.Axiom.FaucetAddr)
+
+	msg := ethereum.CallMsg{
+		From: fromAddress,
+		To:   &contractAddress,
+		Data: input,
+	}
+	_, err = client.CallContract(context.Background(), msg, nil)
 	if err != nil {
 		c.logger.Error(err)
 		return "", err
 	}
 
-	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), c.axiomPrivateKey)
+	auth, err := bind.NewKeyedTransactorWithChainID(c.axiomPrivateKey, chainId)
+	if err != nil {
+		return "", err
+	}
+	gasTipCap, err := client.SuggestGasTipCap(context.Background())
+	if err != nil {
+		return "", err
+	}
+
+	auth.Nonce = big.NewInt(int64(nonce))
+	auth.Value = big.NewInt(0) // in wei
+	auth.GasLimit = uint64(c.Config.Axiom.GasLimit)
+	auth.GasFeeCap = new(big.Int).Mul(gasPrice, big.NewInt(2))
+	auth.GasTipCap = gasTipCap
+
+	tx, err := taurusFaucet.Drip(auth, common.HexToAddress(toAddr), value)
 	if err != nil {
 		c.logger.Error(err)
 		return "", err
 	}
 
-	err = client.SendTransaction(context.Background(), signedTx)
-	if err != nil {
-		return "", err
-	}
-	c.logger.Infof("axm tx sent: %s", signedTx.Hash().Hex())
+	c.logger.Infof("axm tx sent: %s", tx.Hash().Hex())
 
-	return signedTx.Hash().Hex(), nil
+	return tx.Hash().Hex(), nil
 }
 
 func checkBalance(c *Client, toAddr string) (bool, error) {

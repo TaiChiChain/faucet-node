@@ -80,7 +80,7 @@ func (c *Client) SendTra(net string, address string, amount float64, tweetUrl st
 		if err.Error() == global.EnoughTokenMsg {
 			return "", global.EnoughTokenCode, err
 		}
-		matched, matchErr := regexp.MatchString("insufficient funds", err.Error())
+		matched, matchErr := regexp.MatchString("Failed dripping", err.Error())
 		if matchErr != nil {
 			return "", global.BlockChainCode, fmt.Errorf(global.BlockChainMsg)
 		}
