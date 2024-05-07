@@ -33,13 +33,13 @@ type Config struct {
 }
 
 type Scrapper struct {
-	ScrapperAddr string `mapstructure:"scrapper_addr" json:"scrapper_addr"`
+	ScrapperAddr string `mapstructure:"scrapper_addr" json:"scrapper_addr" toml:"scrapper_addr"`
 }
 
 // Log are config about log
 type Log struct {
 	Filename     string `toml:"filename" json:"filename"`
-	ReportCaller bool   `mapstructure:"report_caller"`
+	ReportCaller bool   `mapstructure:"report_caller" toml:"report_caller"`
 	Level        string `toml:"level" json:"level"`
 
 	EnableCompress   bool     `mapstructure:"enable_compress" toml:"enable_compress"`
@@ -57,17 +57,17 @@ type LogModule struct {
 }
 
 type AXIOM struct {
-	TestNetName  string  `mapstructure:"test_net_name" json:"test_net_name"`
-	AxiomAddr    string  `mapstructure:"axiom_addr" json:"axiom_addr"`
-	AxiomKeyPath string  `mapstructure:"axiom_key_path" json:"axiom_key_path"`
-	Amount       float64 `mapstructure:"amount" json:"amount"`
-	TweetAmount  float64 `mapstructure:"tweet_amount" json:"tweet_amount"`
-	ClaimLimit   float64 `mapstructure:"claim_limit" json:"claim_limit"`
-	GasLimit     uint64  `mapstructure:"gas_limit" json:"gas_limit"`
+	TestNetName  string  `mapstructure:"test_net_name" json:"test_net_name" toml:"test_net_name"`
+	AxiomAddr    string  `mapstructure:"axiom_addr" json:"axiom_addr" toml:"axiom_addr"`
+	AxiomKeyPath string  `mapstructure:"axiom_key_path" json:"axiom_key_path" toml:"axiom_key_path"`
+	Amount       float64 `mapstructure:"amount" json:"amount" toml:"amount"`
+	TweetAmount  float64 `mapstructure:"tweet_amount" json:"tweet_amount" toml:"tweet_amount"`
+	ClaimLimit   float64 `mapstructure:"claim_limit" json:"claim_limit" toml:"claim_limit"`
+	GasLimit     uint64  `mapstructure:"gas_limit" json:"gas_limit" toml:"gas_limit"`
 }
 
 type Network struct {
-	Port string `mapstructure:"port" json:"port"`
+	Port string `mapstructure:"port" json:"port" toml："port"`
 }
 
 func DefaultConfig() *Config {
