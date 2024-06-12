@@ -58,6 +58,7 @@ type LogModule struct {
 
 type AXIOM struct {
 	TestNetName  string  `mapstructure:"test_net_name" json:"test_net_name" toml:"test_net_name"`
+	FaucetAddr   string  `mapstructure:"faucet_addr" json:"faucet_addr" toml:"faucet_addr"`
 	AxiomAddr    string  `mapstructure:"axiom_addr" json:"axiom_addr" toml:"axiom_addr"`
 	AxiomKeyPath string  `mapstructure:"axiom_key_path" json:"axiom_key_path" toml:"axiom_key_path"`
 	Amount       float64 `mapstructure:"amount" json:"amount" toml:"amount"`
@@ -74,12 +75,13 @@ func DefaultConfig() *Config {
 	return &Config{
 		Axiom: AXIOM{
 			TestNetName:  "Taurus",
+			FaucetAddr:   "0x0000000000000000000000000000000000000000",
 			AxiomAddr:    "http://127.0.0.1:8881",
 			AxiomKeyPath: "axiom.account.key",
 			Amount:       100,
 			TweetAmount:  200,
 			ClaimLimit:   600,
-			GasLimit:     21000,
+			GasLimit:     100000,
 		},
 		Network: Network{
 			Port: "8080",
